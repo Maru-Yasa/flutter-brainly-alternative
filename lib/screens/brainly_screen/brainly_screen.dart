@@ -1,6 +1,8 @@
+import 'package:brainly2/models/brainly.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../providers/brainly_provider.dart';
+import '../brainly_detail/brainly_detail.dart';
 
 class BrainlyScreen extends StatefulWidget {
   @override
@@ -146,6 +148,12 @@ class _ListAnswerWidgetState extends State<ListAnswerWidget> {
   _ListAnswerWidgetState(List data) {
     this.data = data;
   }
+
+  void onTapHandler(Datum _data) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => BrainlyDetail(data: _data)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -154,31 +162,48 @@ class _ListAnswerWidgetState extends State<ListAnswerWidget> {
         child: ListView.builder(
             itemCount: data.length,
             itemBuilder: (context, index) {
-              return Card(
-                margin: EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
-                      child: Text(
-                        this.data[index].pertanyaan.toString().toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                            textStyle: Theme.of(context).textTheme.headline1),
-                        maxLines: 5,
-                        overflow: TextOverflow.ellipsis,
+              return GestureDetector(
+                onTap: () => onTapHandler(this.data[index]),
+                child: Card(
+                  margin: EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 10.0),
+                        child: Text(
+                          this.data[index].pertanyaan.toString().toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                              textStyle: Theme.of(context).textTheme.headline1),
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(20.0, 20.0, 10.0, 20.0),
-                      child: Text(
-                        this.data[index].jawaban[0].text,
-                        style: GoogleFonts.montserrat(
-                            textStyle: Theme.of(context).textTheme.bodyText1),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(20.0, 20.0, 10.0, 15.0),
+                        child: Text(
+                          this.data[index].jawaban[0].text,
+                          style: GoogleFonts.montserrat(
+                              textStyle: Theme.of(context).textTheme.bodyText1),
+                        ),
                       ),
-                    ),
-                  ],
+                      this.data[index].questionMedia.isEmpty
+                          ? Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(20.0, 0.0, 10.0, 15.0),
+                              alignment: Alignment.topLeft,
+                              child: this.data[index].jawaban[0].media.isEmpty
+                                  ? null
+                                  : Icon(Icons.image))
+                          : Container(
+                              padding:
+                                  EdgeInsets.fromLTRB(20.0, 0.0, 10.0, 15.0),
+                              alignment: Alignment.topLeft,
+                              child: Icon(Icons.image),
+                            ),
+                    ],
+                  ),
                 ),
               );
             }),
