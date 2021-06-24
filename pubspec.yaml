@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^2.1.0
   http: ^0.13.3
+  flutter_launcher_icons: ^0.9.0
   flutter_math_fork: ^0.3.3+1
 
 
@@ -37,6 +38,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/icon.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

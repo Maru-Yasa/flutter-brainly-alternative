@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import '../../models/brainly.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_math_fork/tex.dart';
 
 class BrainlyDetail extends StatefulWidget {
   final Datum data;
