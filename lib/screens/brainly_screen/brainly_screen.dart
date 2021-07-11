@@ -15,19 +15,6 @@ class _BrainlyScreenState extends State<BrainlyScreen> {
 
   String question = "";
   List data = [];
-  getBrainly(String question) async {
-    dynamic tempData = await BrainlyProvider.fetch(question);
-    setState(() {
-      this.data = tempData;
-      this.question = question;
-    });
-  }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   dataLoadFunction(); // this function gets called
-  // }
 
   dataLoadFunction(String question) async {
     setState(() {
@@ -121,17 +108,20 @@ class _TextInputWidgetState extends State<TextInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      onSubmitted: this.onSubmitted,
-      controller: controller,
-      decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50.0)),
-          labelStyle: GoogleFonts.montserrat(),
-          hintText: "Pertanyaan",
-          suffixIcon: IconButton(
-            icon: Icon(Icons.search),
-            onPressed: this.onPresshandler,
-          )),
+    return Container(
+      child: TextField(
+        onSubmitted: this.onSubmitted,
+        controller: controller,
+        decoration: InputDecoration(
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(50.0)),
+            labelStyle: GoogleFonts.montserrat(),
+            hintText: "Pertanyaan",
+            suffixIcon: IconButton(
+              icon: Icon(Icons.search),
+              onPressed: this.onPresshandler,
+            )),
+      ),
     );
   }
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'screens/brainly_screen/brainly_screen.dart';
+import 'screens/home_screen/home_screen.dart';
 import 'style.dart';
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BrainlyScreen(),
+      home: HomeScreen(),
       theme: ThemeData(
           primarySwatch: Colors.indigo,
           textTheme: TextTheme(
