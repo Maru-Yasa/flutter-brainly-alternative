@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../models/wikipedia.dart';
 import '../../providers/wikipedia_provider.dart';
-import '../wikipedia_page/wikipedia_page.dart';
+import '../wikipedia_page_screen/wikipedia_page_screen.dart';
 
 class WikipediaScreen extends StatefulWidget {
   @override
@@ -13,17 +13,26 @@ class _WikipediaScreenState extends State<WikipediaScreen> {
   String query = "";
   bool _isLoading = false;
   List wikiList = [];
+  bool isCloseTop = false;
+  int offset = 0;
   void dataCallback(String text) {
     setState(() {
       query = text;
     });
   }
 
+  void scrollCallback(double offset) {
+    setState(() {
+      isCloseTop = offset > 50 ? true : false;
+    });
+  }
+
+  ScrollController scrollController = ScrollController();
+  @override
   void getWiki(String query) async {
     setState(() {
       _isLoading = true;
     });
-    print('masuk get wiki');
     dynamic data = await WikipediaProvider.fetch(query);
     print(data[0]);
     setState(() {
@@ -36,6 +45,7 @@ class _WikipediaScreenState extends State<WikipediaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.indigo[50],
       appBar: AppBar(
@@ -50,25 +60,30 @@ class _WikipediaScreenState extends State<WikipediaScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            margin: EdgeInsets.only(
-              left: 20.0,
-              right: 20.0,
-              top: 10.0,
-              bottom: 10.0,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextInputWidget(this.getWiki),
-                Container(
-                  margin: EdgeInsets.only(top: 5.0, left: 5.0),
-                  child: this.wikiList.isNotEmpty
-                      ? Text("tips:Tap di box untuk melihat detail")
-                      : Text(""),
-                )
-              ],
+          AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            height: isCloseTop ? 0 : size.height * 0.13,
+            child: Container(
+              margin: EdgeInsets.only(
+                left: 20.0,
+                right: 20.0,
+                top: 10.0,
+                bottom: 10.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextInputWidget(this.getWiki),
+                  Container(
+                    margin: EdgeInsets.only(top: 5.0, left: 5.0),
+                    child: this.wikiList.isNotEmpty
+                        ? Text("tips:Tap di box untuk melihat detail" +
+                            offset.toString())
+                        : Text(""),
+                  )
+                ],
+              ),
             ),
           ),
           this._isLoading
@@ -76,7 +91,7 @@ class _WikipediaScreenState extends State<WikipediaScreen> {
                   margin: EdgeInsets.all(20.0),
                   child: Center(child: CircularProgressIndicator()),
                 )
-              : WikiListWidget(this.wikiList)
+              : WikiListWidget(this.wikiList, this.scrollCallback)
         ],
       ),
     );
@@ -125,25 +140,46 @@ class _TextInputWidgetState extends State<TextInputWidget> {
   }
 }
 
-class WikiListWidget extends StatelessWidget {
+class WikiListWidget extends StatefulWidget {
   List wikiList = [];
-  WikiListWidget(this.wikiList);
+  Function scrollCallback;
+  ScrollController? controller;
+  WikiListWidget(this.wikiList, this.scrollCallback);
+  @override
+  _WikiListWidgetState createState() => _WikiListWidgetState();
+}
+
+class _WikiListWidgetState extends State<WikiListWidget> {
+  bool isCloseTop = false;
+  ScrollController controller = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    widget.controller = ScrollController();
+    widget.controller?.addListener(() {
+      setState(() {
+        widget.scrollCallback(widget.controller?.offset);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     void onTapHandler(int id) {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => WikipediaPage(id.toString()),
+            builder: (context) => WikipediaPageScreen(id.toString()),
           ));
     }
 
     return Expanded(
       child: ListView.builder(
-        itemCount: this.wikiList.length,
+        controller: widget.controller,
+        itemCount: this.widget.wikiList.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-            onTap: () => onTapHandler(this.wikiList[index].pageId),
+            onTap: () => onTapHandler(this.widget.wikiList[index].pageId),
             child: Card(
               margin: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 10.0),
               child: Column(
@@ -153,7 +189,7 @@ class WikiListWidget extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.fromLTRB(10.0, 10.0, 5.0, 5.0),
                     child: Text(
-                      this.wikiList[index].title,
+                      this.widget.wikiList[index].title,
                       style: GoogleFonts.montserrat(
                           textStyle: Theme.of(context).textTheme.headline1),
                     ),
@@ -161,9 +197,9 @@ class WikiListWidget extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.fromLTRB(10.0, 0.0, 5.0, 20.0),
                     child: Text(
-                        this.wikiList[index].desc == ""
+                        this.widget.wikiList[index].desc == ""
                             ? "Tidak ada deskripsi"
-                            : this.wikiList[index].desc,
+                            : this.widget.wikiList[index].desc,
                         style: GoogleFonts.montserrat(
                             textStyle: Theme.of(context).textTheme.bodyText1)),
                   )

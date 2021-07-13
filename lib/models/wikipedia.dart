@@ -76,7 +76,7 @@ class WikipediaPage {
 class Data {
   Data({
     required this.title,
-    required this.summary,
+    required this.extract,
     required this.thumbnail,
     required this.lang,
     required this.description,
@@ -84,7 +84,7 @@ class Data {
   });
 
   final String title;
-  final String summary;
+  final String extract;
   final String thumbnail;
   final String lang;
   final String description;
@@ -92,7 +92,7 @@ class Data {
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         title: json["title"],
-        summary: json["summary"],
+        extract: json["extract"],
         thumbnail: json["thumbnail"],
         lang: json["lang"],
         description: json["description"],
@@ -101,7 +101,7 @@ class Data {
 
   Map<String, dynamic> toJson() => {
         "title": title,
-        "summary": summary,
+        "extract": extract,
         "thumbnail": thumbnail,
         "lang": lang,
         "description": description,
